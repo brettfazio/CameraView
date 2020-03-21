@@ -116,7 +116,7 @@ private struct PreviewHolder: UIViewRepresentable {
     typealias UIViewType = PreviewView
 }
 
-struct CameraView_Previews: PreviewProvider {
+public struct CameraView_Previews: PreviewProvider {
     static var previews: some View {
         CameraView()
     }
