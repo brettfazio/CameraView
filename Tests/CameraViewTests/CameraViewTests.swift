@@ -3,7 +3,8 @@ import XCTest
 
 final class CameraViewTests: XCTestCase {
     func testExample() {
-
+        CameraView()
+        
     }
 
     static var allTests = [

@@ -14,7 +14,7 @@ public struct CameraView: View {
     private var cameraType: AVCaptureDevice.DeviceType
     private var cameraPosition: AVCaptureDevice.Position
     
-    init(delegate: CameraViewDelegate? = nil, cameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, cameraPosition: AVCaptureDevice.Position = .back) {
+    public init(delegate: CameraViewDelegate? = nil, cameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, cameraPosition: AVCaptureDevice.Position = .back) {
         self.delegate = delegate
         self.cameraType = cameraType
         self.cameraPosition = cameraPosition
