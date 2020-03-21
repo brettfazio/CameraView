@@ -10,8 +10,18 @@ import UIKit
 import AVFoundation
 
 struct CameraStreamView: View {
+    private var delegate: CameraViewDelegate?
+    private var cameraType: AVCaptureDevice.DeviceType
+    private var cameraPosition: AVCaptureDevice.Position
+    
+    init(delegate: CameraViewDelegate? = nil, cameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, cameraPosition: AVCaptureDevice.Position = .back) {
+        self.delegate = delegate
+        self.cameraType = cameraType
+        self.cameraPosition = cameraPosition
+    }
+    
     var body: some View {
-        PreviewHolder()
+        PreviewHolder(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
     }
 }
 
@@ -70,7 +80,7 @@ class PreviewView: UIView {
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
-
+        
         if nil != self.superview {
             self.videoPreviewLayer.session = self.captureSession
             self.videoPreviewLayer.videoGravity = .resizeAspect
@@ -86,13 +96,23 @@ class PreviewView: UIView {
 }
 
 struct PreviewHolder: UIViewRepresentable {
-    func makeUIView(context: UIViewRepresentableContext<PreviewHolder>) -> PreviewView {
-        PreviewView()
+    private var delegate: CameraViewDelegate?
+    private var cameraType: AVCaptureDevice.DeviceType
+    private var cameraPosition: AVCaptureDevice.Position
+    
+    init(delegate: CameraViewDelegate? = nil, cameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, cameraPosition: AVCaptureDevice.Position = .back) {
+        self.delegate = delegate
+        self.cameraType = cameraType
+        self.cameraPosition = cameraPosition
     }
-
+    
+    func makeUIView(context: UIViewRepresentableContext<PreviewHolder>) -> PreviewView {
+        PreviewView(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
+    }
+    
     func updateUIView(_ uiView: PreviewView, context: UIViewRepresentableContext<PreviewHolder>) {
     }
-
+    
     typealias UIViewType = PreviewView
 }
 
