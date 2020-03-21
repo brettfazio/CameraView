@@ -116,8 +116,8 @@ struct PreviewHolder: UIViewRepresentable {
     typealias UIViewType = PreviewView
 }
 
-struct CameraStreamView_Previews: PreviewProvider {
+struct CameraView_Previews: PreviewProvider {
     static var previews: some View {
-        CameraStreamView()
+        CameraView()
     }
 }
