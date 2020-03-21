@@ -117,7 +117,7 @@ private struct PreviewHolder: UIViewRepresentable {
 }
 
 public struct CameraView_Previews: PreviewProvider {
-    static var previews: some View {
+    public static var previews: some View {
         CameraView()
     }
 }
