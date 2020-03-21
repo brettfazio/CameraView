@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 import AVFoundation
 
-struct CameraView: View {
+public struct CameraView: View {
     private var delegate: CameraViewDelegate?
     private var cameraType: AVCaptureDevice.DeviceType
     private var cameraPosition: AVCaptureDevice.Position
@@ -25,7 +25,7 @@ struct CameraView: View {
     }
 }
 
-class PreviewView: UIView {
+private class PreviewView: UIView {
     
     private var delegate: CameraViewDelegate?
     
@@ -95,7 +95,7 @@ class PreviewView: UIView {
     }
 }
 
-struct PreviewHolder: UIViewRepresentable {
+private struct PreviewHolder: UIViewRepresentable {
     private var delegate: CameraViewDelegate?
     private var cameraType: AVCaptureDevice.DeviceType
     private var cameraPosition: AVCaptureDevice.Position
