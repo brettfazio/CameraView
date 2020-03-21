@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 import AVFoundation
 
-struct CameraStreamView: View {
+struct CameraView: View {
     private var delegate: CameraViewDelegate?
     private var cameraType: AVCaptureDevice.DeviceType
     private var cameraPosition: AVCaptureDevice.Position
