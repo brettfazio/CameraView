@@ -20,7 +20,7 @@ public struct CameraView: View {
         self.cameraPosition = cameraPosition
     }
     
-    var body: some View {
+    public var body: some View {
         PreviewHolder(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
     }
 }
