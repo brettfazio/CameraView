@@ -1,6 +1,6 @@
 # CameraView for SwiftUI 📷
 
-CameraView allows you to have a screen on your SwiftUI app that gives a realtime view of the iPhone camera.
+CameraView allows you to have a SnapChat-style screen on your SwiftUI app that gives a realtime view of the iPhone camera.
 
 ## Adding CameraView to your App
 
