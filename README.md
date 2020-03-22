@@ -42,3 +42,7 @@ To set those values use the following init method with whatever parameters you w
 ```
 CameraView(delegate: delegate, cameraType: .builtInDualCamera, cameraPosition: .back)
 ```
+
+## Requirements
+
+iOS 13.0+
