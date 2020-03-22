@@ -1,3 +1,8 @@
+<p align="center">
+    <img src="https://img.shields.io/badge/platform-iOS%2013%2B-blue.svg?style=flat" alt="Platform: iOS 13.0+"/>
+    <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-swift%205.1-4BC51D.svg?style=flat" alt="Language: Swift 5.1" /></a>
+</p>
+
 # CameraView for SwiftUI 📷
 
 CameraView allows you to have a SnapChat-style screen on your SwiftUI app that gives a realtime view of the iPhone camera.
