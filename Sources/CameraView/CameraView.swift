@@ -13,23 +13,58 @@ public struct CameraView: View {
     private var delegate: CameraViewDelegate?
     private var cameraType: AVCaptureDevice.DeviceType
     private var cameraPosition: AVCaptureDevice.Position
+    private var preview : PreviewHolder
+    
+    @ObservedObject private var viewModel : CameraViewModel
     
     public init(delegate: CameraViewDelegate? = nil, cameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, cameraPosition: AVCaptureDevice.Position = .back) {
         self.delegate = delegate
         self.cameraType = cameraType
         self.cameraPosition = cameraPosition
+        self.preview = PreviewHolder(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
+        
+        self.viewModel = CameraViewModel(preview: self.preview)
     }
     
     public var body: some View {
-        PreviewHolder(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
+        preview
+    }
+    
+    public func getViewModel() -> CameraViewModel {
+        return self.viewModel
     }
 }
 
-private class PreviewView: UIView {
+extension CameraView {
+    public class CameraViewModel : NSObject, ObservableObject {
+        @Published var capturedPhoto: UIImage? = nil
+        
+        private var preview : PreviewHolder
+        
+        fileprivate init(preview : PreviewHolder) {
+            self.preview = preview
+        }
+        
+        public func capturePhoto() {
+            //            preview.getView().
+        }
+    }
+}
+
+enum PhotoParseError : Error {
+    case error(Error)
+    case takeRetainValueFailed
+}
+
+private class PreviewView: UIView, AVCapturePhotoCaptureDelegate {
+    
+    @EnvironmentObject var cameraState : CameraState
     
     private var delegate: CameraViewDelegate?
     
     private var captureSession: AVCaptureSession?
+    private var videoDeviceInput: AVCaptureDeviceInput?
+    private var photoOutput: AVCapturePhotoOutput?
     
     var videoPreviewLayer: AVCaptureVideoPreviewLayer {
         return layer as! AVCaptureVideoPreviewLayer
@@ -63,15 +98,30 @@ private class PreviewView: UIView {
         let videoDevice = AVCaptureDevice.default(cameraType,
                                                   for: .video, position: cameraPosition)
         
-        guard videoDevice != nil, let videoDeviceInput = try? AVCaptureDeviceInput(device: videoDevice!), session.canAddInput(videoDeviceInput) else {
+        guard videoDevice != nil, let deviceInput = try? AVCaptureDeviceInput(device: videoDevice!), session.canAddInput(deviceInput) else {
             delegate?.noCameraDetected()
             return
         }
-        session.addInput(videoDeviceInput)
+        self.videoDeviceInput = deviceInput
+        session.addInput(videoDeviceInput!)
+        
+        self.photoOutput = AVCapturePhotoOutput()
+        photoOutput!.isHighResolutionCaptureEnabled = true
+        photoOutput!.isLivePhotoCaptureEnabled = photoOutput!.isLivePhotoCaptureSupported
+        
+        guard session.canAddOutput(photoOutput!) else {
+            delegate?.noCameraDetected()
+            return
+            
+        }
+        session.sessionPreset = .photo
+        session.addOutput(photoOutput!)
+        
         session.commitConfiguration()
         
         self.captureSession = session
         delegate?.cameraSessionStarted()
+        self.captureSession?.startRunning()
     }
     
     override class var layerClass: AnyClass {
@@ -84,9 +134,34 @@ private class PreviewView: UIView {
         if nil != self.superview {
             self.videoPreviewLayer.session = self.captureSession
             self.videoPreviewLayer.videoGravity = .resizeAspect
-            self.captureSession?.startRunning()
+        }
+    }
+    
+    func capturePhoto() {
+        let photoSettings: AVCapturePhotoSettings
+        if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+            photoSettings = AVCapturePhotoSettings(format:
+                [AVVideoCodecKey: AVVideoCodecType.hevc])
         } else {
-            self.captureSession?.stopRunning()
+            photoSettings = AVCapturePhotoSettings()
+        }
+        photoSettings.flashMode = .auto
+        self.photoOutput?.capturePhoto(with: photoSettings, delegate: self)
+    }
+    
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        if error != nil {
+            cameraState.capturedImageError = PhotoParseError.error(error!)
+            return
+        }
+        
+        if let cgImage = photo.previewCGImageRepresentation()?.takeRetainedValue() {
+            let orientation = photo.metadata[kCGImagePropertyOrientation as String] as! NSNumber
+            let uiOrientation = UIImage.Orientation(rawValue: orientation.intValue)!
+            let image = UIImage(cgImage: cgImage, scale: 1, orientation: uiOrientation)
+            cameraState.capturedImage = image
+        }else {
+            cameraState.capturedImageError = PhotoParseError.takeRetainValueFailed
         }
     }
     
@@ -99,18 +174,24 @@ private struct PreviewHolder: UIViewRepresentable {
     private var delegate: CameraViewDelegate?
     private var cameraType: AVCaptureDevice.DeviceType
     private var cameraPosition: AVCaptureDevice.Position
+    private var view: PreviewView
     
     init(delegate: CameraViewDelegate? = nil, cameraType: AVCaptureDevice.DeviceType = .builtInWideAngleCamera, cameraPosition: AVCaptureDevice.Position = .back) {
         self.delegate = delegate
         self.cameraType = cameraType
         self.cameraPosition = cameraPosition
+        self.view = PreviewView(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
     }
     
     func makeUIView(context: UIViewRepresentableContext<PreviewHolder>) -> PreviewView {
-        PreviewView(delegate: delegate, cameraType: cameraType, cameraPosition: cameraPosition)
+        view
     }
     
     func updateUIView(_ uiView: PreviewView, context: UIViewRepresentableContext<PreviewHolder>) {
+    }
+    
+    func getView() -> PreviewView {
+        return self.view
     }
     
     typealias UIViewType = PreviewView
