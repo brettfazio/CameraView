@@ -46,7 +46,7 @@ extension CameraView {
         }
         
         public func capturePhoto() {
-            //            preview.getView().
+            preview.getView().capturePhoto()
         }
     }
 }
