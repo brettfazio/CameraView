@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CameraState : NSObject, ObservableObject {
+public class CameraState : NSObject, ObservableObject {
     @Published var capturedImage : UIImage?
     @Published var capturedImageError : Error?
 }
