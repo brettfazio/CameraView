@@ -139,7 +139,7 @@ private class PreviewView: UIView, AVCapturePhotoCaptureDelegate {
     
     func capturePhoto() {
         let photoSettings: AVCapturePhotoSettings
-        if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
+        if photoOutput!.availablePhotoCodecTypes.contains(.hevc) {
             photoSettings = AVCapturePhotoSettings(format:
                 [AVVideoCodecKey: AVVideoCodecType.hevc])
         } else {
