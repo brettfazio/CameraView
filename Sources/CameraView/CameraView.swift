@@ -133,7 +133,7 @@ private class PreviewView: UIView, AVCapturePhotoCaptureDelegate {
         
         if nil != self.superview {
             self.videoPreviewLayer.session = self.captureSession
-            self.videoPreviewLayer.videoGravity = .resizeAspect
+            self.videoPreviewLayer.videoGravity = .resizeAspectFill
         }
     }
     
