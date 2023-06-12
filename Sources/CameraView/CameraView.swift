@@ -155,7 +155,7 @@ private class PreviewView: UIView, AVCapturePhotoCaptureDelegate {
             return
         }
         
-        if let cgImage = photo.previewCGImageRepresentation()?.takeRetainedValue() {
+        if let cgImage = photo.previewCGImageRepresentation() {
             let orientation = photo.metadata[kCGImagePropertyOrientation as String] as! NSNumber
             let uiOrientation = UIImage.Orientation(rawValue: orientation.intValue)!
             let image = UIImage(cgImage: cgImage, scale: 1, orientation: uiOrientation)
